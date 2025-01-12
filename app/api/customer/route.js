@@ -2,42 +2,59 @@ import { NextResponse } from "next/server";
 import { Customer } from "@/utils/models/customers";
 import mongoose from "mongoose";
 
-export async function GET(request) {
-  await mongoose
-    .connect(
-      "mongodb+srv://admin-bhavik:mongodbpassword@cluster1.hju2b.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1/Wpdata"
-    )
-    .then(async (data) => {
-      console.log(`Mongodb connected with server: ${data.connection.host}`);
-    })
-    .catch((err) => {
-      console.error("Error connecting to MongoDB:", err);
-    });
+const uri =
+  "mongodb+srv://admin-bhavik:mongodbpassword@cluster1.hju2b.mongodb.net/Wpdata";
+export async function GET() {
+  try {
+    if (!mongoose.connection.readyState) {
+      await mongoose.connect(uri, {
+        serverSelectionTimeoutMS: 5000,
+      });
+      console.log("Connected to MongoDB");
+    }
 
-  return NextResponse.json({ result: data });
+    const customersData = await Customer.find({});
+    return NextResponse.json({ result: customersData });
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch data" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(req) {
-  let payload = await req.json();
-  await mongoose
-    .connect(
-      "mongodb+srv://admin-bhavik:mongodbpassword@cluster1.hju2b.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1/Wpdata"
-    )
-    .then(async (data) => {
-      console.log(`Mongodb connected with server: ${data.connection.host}`);
-    })
-    .catch((err) => {
-      console.error("Error connecting to MongoDB:", err);
-    });
+  try {
+    const payload = await req.json();
 
-  if (!payload.name || !payload.number || !payload.email) {
+    // Connect to MongoDB if not already connected
+    if (!mongoose.connection.readyState) {
+      await mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 });
+      console.log("Connected to MongoDB");
+    }
+
+    // Validate required fields
+    if (!payload.name || !payload.number || !payload.email) {
+      return NextResponse.json(
+        { result: "Required field not found", success: false },
+        { status: 400 }
+      );
+    }
+
+    // Save to MongoDB
+    const newCustomer = new Customer(payload);
+    const savedCustomer = await newCustomer.save();
+
     return NextResponse.json(
-      { result: "required field not found", success: false },
-      { status: "400" }
+      { result: "New Customer Created", customer: savedCustomer },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Error creating customer:", error);
+    return NextResponse.json(
+      { result: "Error creating customer", error: error.message },
+      { status: 500 }
     );
   }
-  return NextResponse.json(
-    { result: "New Customer Created", payload },
-    { status: 201 }
-  );
 }

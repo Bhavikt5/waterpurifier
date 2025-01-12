@@ -12,4 +12,4 @@ const customerModel = new mongoose.Schema(
 );
 
 export const Customer =
-  mongoose.models.customers || mongoose.model("customers", customerModel);
+  mongoose.models.customer || mongoose.model("customer", customerModel);
