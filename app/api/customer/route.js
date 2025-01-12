@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import { Customer } from "@/utils/models/customers";
 import mongoose from "mongoose";
 
-const uri =
-  "mongodb+srv://admin-bhavik:mongodbpassword@cluster1.hju2b.mongodb.net/Wpdata";
+const uri = process.env.MONGODB_URI;
 export async function GET() {
   try {
     if (!mongoose.connection.readyState) {
