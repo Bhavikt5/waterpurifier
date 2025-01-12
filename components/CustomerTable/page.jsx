@@ -12,7 +12,7 @@ export default function CustomerTable() {
         setLoading(true); // Show loader before fetching data
         // const response = await fetch("http://localhost:3000/api/customer");
         const response = await fetch(
-          "https://waterpurifier-oq62gyy8g-bhavikt5s-projects.vercel.app/api/customer"
+          "https://waterpurifier.vercel.app/api/customer"
         );
         const data = await response.json();
         setCustomers(data.result);
