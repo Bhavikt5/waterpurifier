@@ -12,13 +12,23 @@ const page = () => {
     const data = { name, email, number };
 
     try {
-      const response = await fetch("http://localhost:3000/api/customer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await fetch(
+        "https://waterpurifier.vercel.app/api/customer",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+      // const response = await fetch("http://localhost:3000/api/customer", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(data),
+      // });
 
       if (!response.ok) {
         throw new Error("Failed to submit data");
