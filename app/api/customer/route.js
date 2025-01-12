@@ -3,6 +3,7 @@ import { Customer } from "@/utils/models/customers";
 import mongoose from "mongoose";
 
 const uri = process.env.MONGODB_URI;
+
 export async function GET() {
   try {
     if (!mongoose.connection.readyState) {
